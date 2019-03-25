@@ -191,6 +191,16 @@ public final class PDFViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
     }
     
+    public func updatePageTo(page: Int) {
+        guard self.document.pageCount > page else {
+            return
+        }
+        self.currentPageIndex = page
+        let currentIndexPath = IndexPath(row: self.currentPageIndex, section: 0)
+        self.collectionView.reloadItems(at: [currentIndexPath])
+        self.collectionView.scrollToItem(at: currentIndexPath, at: .centeredHorizontally, animated: false)
+    }
+    
     /// Takes an appropriate action based on the current action style
     @objc func actionButtonPressed() {
         switch actionStyle {
