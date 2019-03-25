@@ -17,10 +17,11 @@ extension PDFViewController {
     /// - parameter actionStyle:         sytle of the action button
     /// - parameter backButton:          button to override the default controller back button
     /// - parameter isThumbnailsEnabled: whether or not the thumbnails bar should be enabled
+    /// - parameter hideNavigationBarOnTap: whether or not the navigation bar should be hide on tap
     /// - parameter startPageIndex:      page index to start on load, defaults to 0; if out of bounds, set to 0
     ///
     /// - returns: a `PDFViewController`
-    public class func createNew(with document: PDFDocument, title: String? = nil, actionButtonImage: UIImage? = nil, actionStyle: ActionStyle = .print, backButton: UIBarButtonItem? = nil, isThumbnailsEnabled: Bool = true, startPageIndex: Int = 0) -> PDFViewController {
+    public class func createNew(with document: PDFDocument, title: String? = nil, actionButtonImage: UIImage? = nil, actionStyle: ActionStyle = .print, backButton: UIBarButtonItem? = nil, isThumbnailsEnabled: Bool = true, hideNavigationBarOnTap: Bool = true, startPageIndex: Int = 0) -> PDFViewController {
         let storyboard = UIStoryboard(name: "PDFReader", bundle: Bundle(for: PDFViewController.self))
         let controller = storyboard.instantiateInitialViewController() as! PDFViewController
         controller.document = document
@@ -46,6 +47,7 @@ extension PDFViewController {
             controller.actionButton = UIBarButtonItem(barButtonSystemItem: .action, target: controller, action: #selector(actionButtonPressed))
         }
         controller.isThumbnailsEnabled = isThumbnailsEnabled
+        controller.hideNavigationBarOnTap = hideNavigationBarOnTap
         return controller
     }
 }
@@ -114,6 +116,8 @@ public final class PDFViewController: UIViewController {
             }
         }
     }
+    
+    private var hideNavigationBarOnTap = true
     
     /// Slides horizontally (from left to right, default) or vertically (from top to bottom)
     public var scrollDirection: UICollectionView.ScrollDirection = .horizontal {
@@ -256,7 +260,7 @@ extension PDFViewController: PDFPageCollectionViewCellDelegate {
             guard let isNavigationBarHidden = navigationController?.isNavigationBarHidden else {
                 return false
             }
-            return !isNavigationBarHidden
+            return !isNavigationBarHidden && hideNavigationBarOnTap
         }
         UIView.animate(withDuration: 0.25) {
             self.hideThumbnailController(shouldHide)
